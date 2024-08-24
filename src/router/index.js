@@ -1,11 +1,35 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import LoginPageView from '@/views/LoginPageView.vue'
+import UserHome from '@/views/Dashboard/UserHome.vue'
+import AddUserScape from '@/views/Dashboard/AddUserScape.vue'
 
 const routes = [
   {
-    path: '/',
+    path: '/register',
     name: 'home',
     component: HomeView
+  },
+  {
+    path: '/',
+    name: 'login',
+    component: LoginPageView
+  },
+  {
+    path: '/dashboard',
+    name: 'userhome',
+    component: UserHome,
+    meta: {
+      requiresAuth : true
+    }
+  },
+  {
+    path: '/add-user-scape',
+    name: 'addUserScape',
+    component: AddUserScape,
+    meta: {
+      requiresAuth : true
+    }
   },
   {
     path: '/about',
@@ -20,6 +44,23 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  console.log(to.meta.requiresAuth)
+  if (to.meta.requiresAuth) {
+    const token = localStorage.getItem("token")
+    if (token)
+    {
+      next()
+    }
+    else{
+      next('/')
+    }
+  }
+  else{
+    next()
+  }
 })
 
 export default router
